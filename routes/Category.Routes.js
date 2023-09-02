@@ -1,14 +1,14 @@
 import express from 'express'
-import {getUsers, createUser, updateUser, deleteUser} from '../controllers/User.Controllers.js'
+import {getCategories, createCategory, updateCategory, deleteCategory} from '../controllers/Category.Controllers.js'
 
 const router = express.Router()
 
-router.get('/', getUsers)
+router.get('/', getCategories)
 
-router.post('/', createUser)
+router.post('/', createCategory)
 
-router.put('/:id', updateUser)
+router.put('/:id', updateCategory)
 
-router.delete('/:id', deleteUser)
+router.delete('/:id', deleteCategory)
 
 export default router
