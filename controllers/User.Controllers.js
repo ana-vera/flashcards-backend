@@ -1,4 +1,7 @@
 import asyncHandler from "express-async-handler"
+import User from '../models/User.Model.js'
+import bcrypt from 'bcryptjs'
+import jwt from 'jsonwebtoken'
 
 const getUsers = 
 asyncHandler(
@@ -9,7 +12,41 @@ asyncHandler(
 const createUser = 
 asyncHandler(
     async (req,res) =>{
-        res.status(200).json({message: 'User created'})
+        console.log(req.body)
+        const {name, email, password} = req.body    
+    
+        if (!name || !email || !password) {
+            res.status(400)
+            throw new Error('Missing data')
+        }
+    
+        const userExists = await User.findOne({email})
+        if (userExists) {
+            res.status(400)
+            throw new Error('Email already registered')
+        }
+    
+        const salt  = await bcrypt.genSalt()
+        const hashedPassword = await bcrypt.hash(password, salt)
+    
+        const user = await User.create({
+            name,
+            email,
+            password: hashedPassword
+        })
+    
+        if(user){
+            res.status(201).json({
+                message: "User created",
+                _id: user.id,
+                name: user.name,
+                email: user.email,
+                token: user.token
+            })
+        } else{
+            res.status(400)
+            throw new Error('Invalid data')
+        }
 })
 
 const updateUser = 
