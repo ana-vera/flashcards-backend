@@ -5,11 +5,12 @@ import userRoutes from './routes/User.Routes.js'
 import categoryRoutes from './routes/Category.Routes.js'
 import connectDB from './config/db.js'
 import colors from 'colors'
+import cors from 'cors'
 
 connectDB()
 const port = process.env.PORT
 const app = express()
-
+app.use(cors())
 app.use(errorHandler)
 app.use(express.json())
 app.use('/api/users', userRoutes)
