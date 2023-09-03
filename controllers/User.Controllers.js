@@ -3,14 +3,12 @@ import User from '../models/User.Model.js'
 import bcrypt from 'bcryptjs'
 import jwt from 'jsonwebtoken'
 
-const getUsers = 
-asyncHandler(
+const getUsers = asyncHandler(
     async (req,res) =>{
         res.status(200).json({message: 'Obtain users'})
 })
 
-const createUser = 
-asyncHandler(
+const createUser = asyncHandler(
     async (req,res) =>{
         console.log(req.body)
         const {name, email, password} = req.body    
@@ -49,6 +47,27 @@ asyncHandler(
         }
 })
 
+const loginUser = asyncHandler( async (req,res) => {
+    const {email, password} = req.body
+
+    const user = await User.findOne({email})
+
+    console.log(`email  ${email}`.bgCyan)
+    console.log(`password  ${password}`.bgMagenta)
+
+    if(user && (await bcrypt.compare(password, user.password))) {
+        res.status(200).json({
+            _id: user.id,
+            name: user.name,
+            email: user.email,
+            token: generateToken(user.id)
+        })
+    } else {
+        res.status(400)
+        throw new Error("Incorrect username or password")
+    }
+})
+
 const updateUser = 
 asyncHandler(
     async (req,res) =>{
@@ -65,5 +84,6 @@ export {
     getUsers,
     createUser,
     updateUser,
-    deleteUser
+    deleteUser,
+    loginUser
 }
